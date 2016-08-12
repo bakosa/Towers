@@ -1,0 +1,77 @@
+TITLE MASM Template						(main.asm)
+
+INCLUDE Irvine32.inc
+
+.data
+string1 BYTE "Enter Number of disks ",0
+move BYTE "Move Disk ",0
+from BYTE "From peg ",0
+to BYTE "to peg ",0
+
+
+.code
+main PROC
+mov edx, OFFSET string1
+;ask user for number of disks to solve 
+call writeString
+;retrieve number of disks from user into eax 
+call ReadInt
+
+mov ebx, 1
+mov ecx, 2
+mov edx, 3 
+;mov esi, eax
+call Hanoi 
+
+main ENDP
+
+
+
+Hanoi PROC 
+
+cmp eax, 00
+JNE if_True
+	;false code
+jmp short end_If
+
+if_True: 
+; true code n != 0 
+	; call writeDec
+
+	dec eax
+	xchg ecx, edi
+	call Hanoi 
+
+	mov edx, OFFSET move
+	call writeString 
+	mov esi, eax 
+	call writeDec ;output n 
+	
+	mov edx, OFFSET from
+	call writeString
+	mov eax, ebx
+	call writeDec
+
+	mov edx, OFFSET to
+	call writeString
+	mov eax,ecx 
+	call writeDec
+	mov eax, esi 
+
+	dec eax 
+	xchg edi, ebx
+	call Hanoi
+
+
+
+
+
+
+
+end_If: 
+
+
+
+Hanoi ENDP
+
+END main
