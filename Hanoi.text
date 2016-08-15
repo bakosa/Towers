@@ -17,61 +17,62 @@ call writeString
 ;retrieve number of disks from user into eax 
 call ReadInt
 
-mov ebx, 1
-mov ecx, 2
-mov edx, 3 
-;mov esi, eax
-call Hanoi 
-
+push 1
+push 2
+push 3
+push eax
+call Hanoi
+call writeDec
+call Crlf
+exit
 main ENDP
 
-
-
 Hanoi PROC 
-
-cmp eax, 00
-JNE if_True
-	;false code
-jmp short end_If
-
-if_True: 
-; true code n != 0 
-	; call writeDec
-
-	dec eax
-	xchg ecx, edi
-	call Hanoi 
-
-	mov edx, OFFSET move
-	call writeString 
-	mov esi, eax 
-	call writeDec ;output n 
+	push ebp 
+	mov ebp, esp
+	mov eax,[ebp+8]		;get n
+	cmp eax,0			;is n > 0?  
+	ja L1				;Yes: Continue 
+	;mov eax,1			;No
+	jmp L2
 	
-	mov edx, OFFSET from
-	call writeString
-	mov eax, ebx
-	call writeDec
+	L1:
+		push [ebp+20]
+		push [ebp+12]	;hanoi(int n-1, start, extra, finish) 
+		push[ebp+16]
+		dec eax
+		push eax
+		call Hanoi
 
-	mov edx, OFFSET to
-	call writeString
-	mov eax,ecx 
-	call writeDec
-	mov eax, esi 
+		mov edx, OFFSET move
+		call writeString
+		mov eax, [ebp+8]
+		call writeDec 
 
-	dec eax 
-	xchg edi, ebx
-	call Hanoi
+		mov edx, OFFSET from
+		call writeString
+		mov eax, [ebp+20]
+		call writeDec 
 
+		mov edx, OFFSET to
+		call writeString
+		mov eax, [ebp+16]
+		call writeDec
+		
+		mov eax, [ebp+8]
 
+		push [ebp+12]	;hanoi(int n-1, start, extra, finish) 
+		push[ebp+16]
+		push [ebp+20]
+		dec eax
+		push eax
+		call Hanoi 
 
-
-
-
-
-end_If: 
-
-
-
+	ReturnFact:
+		;mov ebx, [ebp+8]
+		;mul ebx
+	L2: pop ebp
+		ret 4
 Hanoi ENDP
 
 END main
